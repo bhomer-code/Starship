@@ -5,59 +5,57 @@ import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * ECS (Entity-Component-System) Architecture - Starship Adventure Game
+ * 
+ * This weak ECS implementation follows the basic pattern:
+ * 
+ * ENTITIES (E): Unique IDs or names (e.g., "Commons", "player", "Bridge")
+ * - Represented as keys in HashMaps
+ * - No inherent behavior, just identifiers
+ * 
+ * COMPONENTS (C): Pure data holders (e.g., Position, Description, Exits)
+ * - Store state/data associated with entities
+ * - No behavior, just data structures
+ * 
+ * SYSTEMS (S): Logic and behavior (e.g., move(), displayRoom(), gameLoop())
+ * - Operate on entities with specific components
+ * - Process game logic, handle input, update state
+ * 
+ * This implementation mixes ECS with some non-ECS patterns (static methods, some entity-specific logic)
+ * but demonstrates the core concept of separating data (components) from behavior (systems).
+ */
 public class StarshipAdventure {
     static Scanner scanner = new Scanner(System.in);
     static Random random = new Random();
     static String input = "";
 
-    // Component classes
-    static class Description {
-        String shortDesc;
-        String longDesc;
-        boolean firstVisit = true;
-        Description(String shortDesc, String longDesc) {
-            this.shortDesc = shortDesc;
-            this.longDesc = longDesc;
-        }
-    }
+    // NOTE: Component classes are now in separate files:
+    // Position.java, Description.java, Exits.java, Items.java, Player.java, Docking.java, AirlockState.java
 
-    static class Exits {
-        Map<String, String> exits = new HashMap<>();
-    }
-
-    static class Items {
-        List<String> items = new ArrayList<>();
-    }
-
-    static class Player {
-        List<String> inventory = new ArrayList<>();
-        boolean wearingSuit = false;
-    }
-
-    static class Docking {
-        boolean requested = false;
-        boolean initiated = false;
-        int pad = -1;
-        boolean inSpace = true;
-    }
-
-    static class AirlockState {
-        int turnsWithoutSuit = 0;
-        boolean cycled = false;
-    }
-
-    // Entity storage
-    static Map<String, Position> positions = new HashMap<>();
-    static Map<String, Description> descriptions = new HashMap<>();
-    static Map<String, Exits> exits = new HashMap<>();
-    static Map<String, Items> roomItems = new HashMap<>();
-    static Player player = new Player();
-    static Docking docking = new Docking();
-    static AirlockState airlockState = new AirlockState();
+    // ============================================
+    // ENTITY STORAGE - Maps entities to components
+    // ============================================
+    // These maps associate entity IDs (strings like "Commons", "player") with their components
+    static Map<String, Position> positions = new HashMap<>();          // Entity -> Position component
+    static Map<String, Description> descriptions = new HashMap<>();    // Entity -> Description component
+    static Map<String, Exits> exits = new HashMap<>();                 // Entity -> Exits component
+    static Map<String, Items> roomItems = new HashMap<>();             // Entity -> Items component
+    
+    // Singleton components (could be improved by making these entities with single instances)
+    static Player player = new Player();                               // Player component (improper ECS)
+    static Docking docking = new Docking();                           // Docking component (improper ECS)
+    static AirlockState airlockState = new AirlockState();             // AirlockState component (improper ECS)
 
     // Special entities
     static final String PLAYER = "player";
     static final String OUTSIDE = "outside";
+
+    // ============================================
+    // SYSTEMS - Game logic and behavior
+    // ============================================
+    // These static methods operate on entities with specific components
+    // to implement game mechanics and behavior
 
     public static void main(String[] args) {
         // Initialize rooms
@@ -73,6 +71,7 @@ public class StarshipAdventure {
         gameLoop();
     }
 
+    // SYSTEM: Initialize room entities and their components
     static void initializeRooms() {
         // Commons
         positions.put("Commons", new Position("Commons"));
@@ -88,7 +87,7 @@ public class StarshipAdventure {
         positions.put("Engine", new Position("Engine"));
         descriptions.put("Engine", new Description(
             "The engine room, filled with machinery.",
-            "The engine room thrums with the pulse of KY-25B’s fusion drive. Pipes and conduits snake across the walls, and a control panel flickers with status lights. A heavy wrench lies abandoned near the reactor housing."
+            "The engine room thrums with the pulse of KY-25B's fusion drive. Pipes and conduits snake across the walls, and a control panel flickers with status lights. A heavy wrench lies abandoned near the reactor housing."
         ));
         exits.put("Engine", new Exits());
         exits.get("Engine").exits.put("down", "Cargo");
@@ -100,7 +99,7 @@ public class StarshipAdventure {
         positions.put("Cargo", new Position("Cargo"));
         descriptions.put("Cargo", new Description(
             "The cargo bay, dimly lit and cluttered.",
-            "The cargo bay is a shadowy hold below the engine room. Crates are lashed to the deck, their contents rattling faintly with the ship’s vibrations. A dusty tarp covers something bulky in the corner."
+            "The cargo bay is a shadowy hold below the engine room. Crates are lashed to the deck, their contents rattling faintly with the ship's vibrations. A dusty tarp covers something bulky in the corner."
         ));
         exits.put("Cargo", new Exits());
         exits.get("Cargo").exits.put("up", "Engine");
@@ -123,7 +122,7 @@ public class StarshipAdventure {
         positions.put("Stateroom", new Position("Stateroom"));
         descriptions.put("Stateroom", new Description(
             "A cozy stateroom with a bunk.",
-            "The stateroom is a tight but comfortable retreat. A bunk is tucked against the wall, a folded blanket atop it. A small window reveals the starbase’s silhouette, framed by distant stars."
+            "The stateroom is a tight but comfortable retreat. A bunk is tucked against the wall, a folded blanket atop it. A small window reveals the starbase's silhouette, framed by distant stars."
         ));
         exits.put("Stateroom", new Exits());
         exits.get("Stateroom").exits.put("starboard", "Hall");
@@ -155,7 +154,7 @@ public class StarshipAdventure {
         positions.put("Bridge", new Position("Bridge"));
         descriptions.put("Bridge", new Description(
             "The bridge, command center of KY-25B.",
-            "The bridge is KY-25B’s nerve center. A wide window dominates the forward bulkhead, showcasing Starbase Omicron’s docking arms against the void. The pilot’s chair faces a console studded with controls and a comms unit."
+            "The bridge is KY-25B's nerve center. A wide window dominates the forward bulkhead, showcasing Starbase Omicron's docking arms against the void. The pilot's chair faces a console studded with controls and a comms unit."
         ));
         exits.put("Bridge", new Exits());
         exits.get("Bridge").exits.put("aft", "Hall");
@@ -167,12 +166,13 @@ public class StarshipAdventure {
         positions.put(OUTSIDE, new Position(OUTSIDE));
         descriptions.put(OUTSIDE, new Description(
             "Outside the ship, floating in space.",
-            "You float weightless outside KY-25B, the stars endless around you. The ship’s hull gleams faintly in the starlight."
+            "You float weightless outside KY-25B, the stars endless around you. The ship's hull gleams faintly in the starlight."
         ));
         exits.put(OUTSIDE, new Exits());
         exits.get(OUTSIDE).exits.put("in", "Airlock");
     }
 
+    // SYSTEM: Main game loop - handles player input and delegates to other systems
     static void gameLoop() {
         while (true) {
             System.out.print("> ");
@@ -181,6 +181,7 @@ public class StarshipAdventure {
         }
     }
 
+    // SYSTEM: Process player commands and dispatch to appropriate subsystems
     static void processCommand(String input) {
         String[] parts = input.split(" ", 2);
         String command = parts[0];
@@ -274,6 +275,7 @@ public class StarshipAdventure {
         }
     }
 
+    // SYSTEM: Handle entity movement between rooms
     static void move(String direction) {
         String currentRoom = positions.get(PLAYER).room;
         Exits roomExits = exits.get(currentRoom);
@@ -305,6 +307,7 @@ public class StarshipAdventure {
         }
     }
 
+    // SYSTEM: Update window views based on docking state 
     static void updateRoomDescriptions() {
         // Update airlock description based on docking state
         if (docking.inSpace) {
@@ -315,7 +318,7 @@ public class StarshipAdventure {
 
         // Update outside description based on docking state
         if (docking.inSpace) {
-            descriptions.get(OUTSIDE).longDesc = "You float weightless outside KY-25B, the stars endless around you. The ship’s hull gleams faintly in the starlight.";
+            descriptions.get(OUTSIDE).longDesc = "You float weightless outside KY-25B, the stars endless around you. The ship's hull gleams faintly in the starlight.";
         } else {
             descriptions.get(OUTSIDE).longDesc = "You stand on the starbase's docking pad, feeling the centrifugal gravity. The interior of the starbase bustles with activity.";
         }
@@ -327,16 +330,17 @@ public class StarshipAdventure {
         descriptions.get("Commons").longDesc = commonsDesc;
 
         String stateroomDesc = docking.inSpace ?
-            "The stateroom is a tight but comfortable retreat. A bunk is tucked against the wall, a folded blanket atop it. A small window reveals the starbase’s silhouette, framed by distant stars." :
+            "The stateroom is a tight but comfortable retreat. A bunk is tucked against the wall, a folded blanket atop it. A small window reveals the starbase's silhouette, framed by distant stars." :
             "The stateroom is a tight but comfortable retreat. A bunk is tucked against the wall, a folded blanket atop it. Through the stateroom window, you can see the curved expanse of the interior of the starbase.";
         descriptions.get("Stateroom").longDesc = stateroomDesc;
 
         String bridgeDesc = docking.inSpace ?
-            "The bridge is KY-25B’s nerve center. A wide window dominates the forward bulkhead, showcasing Starbase Omicron’s docking arms against the void. The pilot’s chair faces a console studded with controls and a comms unit." :
-            "The bridge is KY-25B’s nerve center. A wide window dominates the forward bulkhead, showing the interior of the starbase, bustling with activity. The pilot’s chair faces a console studded with controls and a comms unit.";
+            "The bridge is KY-25B's nerve center. A wide window dominates the forward bulkhead, showcasing Starbase Omicron's docking arms against the void. The pilot's chair faces a console studded with controls and a comms unit." :
+            "The bridge is KY-25B's nerve center. A wide window dominates the forward bulkhead, showing the interior of the starbase, bustling with activity. The pilot's chair faces a console studded with controls and a comms unit.";
         descriptions.get("Bridge").longDesc = bridgeDesc;
     }
 
+    // SYSTEM: Render room description and exits
     static void displayRoom(String room) {
         Description desc = descriptions.get(room);
         if (desc.firstVisit || input.equals("look")) {
@@ -350,6 +354,7 @@ public class StarshipAdventure {
         System.out.println();
     }
 
+    // SYSTEM: Render inventory contents
     static void showInventory() {
         if (player.inventory.isEmpty()) {
             System.out.println("Your inventory is empty.");
@@ -362,6 +367,7 @@ public class StarshipAdventure {
         }
     }
 
+    // SYSTEM: Move items to player's inventory
     static void takeItem(String item) {
         String currentRoom = positions.get(PLAYER).room;
         Items items = roomItems.getOrDefault(currentRoom, new Items());
@@ -377,7 +383,8 @@ public class StarshipAdventure {
             System.out.println("You can't take that.");
         }
     }
-
+    
+    // SYSTEM: Update state of player to wearing vac-suit, if possible
     static void wearSuit(String item) {
         if (item.equals("vac-suit") && !player.wearingSuit) {
             if (player.inventory.contains("vac-suit")) {
@@ -393,6 +400,7 @@ public class StarshipAdventure {
         }
     }
 
+    // SYSTEM: Update state of player to not wearing vac-suit
     static void removeSuit(String item) {
         if (item.equals("vac-suit") && player.wearingSuit) {
             player.wearingSuit = false;
@@ -402,6 +410,7 @@ public class StarshipAdventure {
         }
     }
 
+    // SYSTEM: Render detailed long description of item
     static void examine(String item) {
         String currentRoom = positions.get(PLAYER).room;
         String longDesc = "";
@@ -409,7 +418,7 @@ public class StarshipAdventure {
             case "window":
                 if (currentRoom.equals("Commons")) {
                     longDesc = docking.inSpace ?
-                        "The window frames Starbase Omicron’s docking entry, a lattice of steel arms glowing faintly against the infinite black." :
+                        "The window frames Starbase Omicron's docking entry, a lattice of steel arms glowing faintly against the infinite black." :
                         "The window frames the interior of the starbase, bustling with activity.";
                 } else if (currentRoom.equals("Stateroom")) {
                     longDesc = docking.inSpace ?
@@ -417,13 +426,13 @@ public class StarshipAdventure {
                         "Through the stateroom window, you can see the curved expanse of the interior of the starbase.";
                 } else if (currentRoom.equals("Bridge")) {
                     longDesc = docking.inSpace ?
-                        "The bridge window offers a commanding view of the starbase’s docking arms, poised like a predator in the void." :
+                        "The bridge window offers a commanding view of the starbase's docking arms, poised like a predator in the void." :
                         "The bridge window shows the interior of the starbase, bustling with activity.";
                 }
                 break;
             case "wrench":
                 if (currentRoom.equals("Engine") && roomItems.get("Engine").items.contains("wrench"))
-                    longDesc = "A hefty wrench, its handle worn smooth from use, rests near the reactor. It’s caked with grease.";
+                    longDesc = "A hefty wrench, its handle worn smooth from use, rests near the reactor. It's caked with grease.";
                 break;
             case "tarp":
                 if (currentRoom.equals("Cargo") && roomItems.get("Cargo").items.contains("tarp"))
@@ -445,6 +454,7 @@ public class StarshipAdventure {
         }
     }
 
+    // SYSTEM: Change docking state to allow initiation of docking
     static void requestDocking() {
         if (docking.requested) {
             System.out.println("Docking already requested.");
@@ -458,6 +468,7 @@ public class StarshipAdventure {
         docking.requested = true;
     }
 
+    //SYSTEM: Initiate docking state
     static void initiateDocking() {
         if (docking.initiated) {
             System.out.println("Docking sequence already complete.");
@@ -473,6 +484,7 @@ public class StarshipAdventure {
         updateRoomDescriptions();
     }
 
+    //SYSTEM: Cycle air lock with effects based on various states
     static void cycleAirlock() {
         if (docking.inSpace && !player.wearingSuit) {
             handleAirlockDeath();
@@ -485,7 +497,8 @@ public class StarshipAdventure {
             }
         }
     }
-
+    
+    //SYSTEM: Handle dangerous airlock usage
     static void handleAirlockDeath() {
         System.out.println("The outer hatch opens to the void. Silence engulfs you as the air rushes out.");
         System.out.println("Your vision blurs, ice crystals form on your skin, and your lungs burn.");
