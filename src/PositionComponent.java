@@ -5,10 +5,10 @@
  * It's used by the player entity to track their current position
  * and by room entities to define their own position identifier.
  */
-public class Position {
-    String room;
+public class PositionComponent implements Component {
+    public final String room;
     
-    Position(String room) { 
+    public PositionComponent(String room) { 
         this.room = room; 
     }
 }
