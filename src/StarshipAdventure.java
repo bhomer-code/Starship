@@ -44,6 +44,7 @@ public class StarshipAdventure {
         // Register systems in order of dependency
         ecs.registerSystem(new RenderSystem(ecs));
         ecs.registerSystem(new MovementSystem(ecs));
+        ecs.registerSystem(new ItemDescriptionSystem(ecs)); // Handles context-sensitive descriptions
         ecs.registerSystem(new ItemSystem(ecs));
         ecs.registerSystem(new DockingSystem(ecs));
         ecs.registerSystem(new AirlockSystem(ecs));

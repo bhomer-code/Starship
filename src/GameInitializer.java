@@ -15,6 +15,9 @@ public class GameInitializer {
         // Create and initialize player
         initializePlayer();
         
+        // Initialize item descriptions
+        initializeItemDescriptions();
+        
         // Create game state entities
         initializeGameEntities();
         
@@ -144,6 +147,76 @@ public class GameInitializer {
         ecs.addComponent(player, new PositionComponent("Commons"));
         ecs.addComponent(player, new InventoryComponent(10));
         ecs.addComponent(player, new EquipmentComponent());
+    }
+    
+    private void initializeItemDescriptions() {
+        // Initialize wrench in Engine room
+        Entity wrenchEngine = ecs.createEntity("Engine_wrench");
+        ItemDescriptionComponent wrenchDesc = new ItemDescriptionComponent("A hefty wrench.");
+        wrenchDesc.addContextDescription("Engine", "A hefty wrench, its handle worn smooth from use, rests near the reactor. It's caked with grease.");
+        ecs.addComponent(wrenchEngine, wrenchDesc);
+        
+        // Initialize tarp in Cargo bay
+        Entity tarpCargo = ecs.createEntity("Cargo_tarp");
+        ItemDescriptionComponent tarpDesc = new ItemDescriptionComponent("A dusty tarp.");
+        tarpDesc.addContextDescription("Cargo", "The tarp is dusty and frayed, draped over a lumpy shape. Peeking beneath reveals a stack of spare parts.");
+        ecs.addComponent(tarpCargo, tarpDesc);
+        
+        // Initialize tank in Ship Locker
+        Entity tankLocker = ecs.createEntity("Ship Locker_tank");
+        ItemDescriptionComponent tankDesc = new ItemDescriptionComponent("An oxygen tank.");
+        tankDesc.addContextDescription("Ship Locker", "The oxygen tank is scratched but functional, its gauge showing three-quarters full.");
+        ecs.addComponent(tankLocker, tankDesc);
+        
+        // Initialize console on Bridge
+        Entity consoleBridge = ecs.createEntity("Bridge_console");
+        ItemDescriptionComponent consoleDesc = new ItemDescriptionComponent("A command console.");
+        consoleDesc.addContextDescription("Bridge", "The console is a maze of switches, dials, and a glowing comms unit, ready to hail the starbase.");
+        ecs.addComponent(consoleBridge, consoleDesc);
+        
+        // Initialize window descriptions for different rooms and states
+        initializeWindowDescriptions();
+    }
+    
+    private void initializeWindowDescriptions() {
+        // Commons window descriptions
+        Entity commonsWindowSpace = ecs.createEntity("Commons_window_space");
+        ItemDescriptionComponent cwSpace = new ItemDescriptionComponent(
+            "The window frames Starbase Omicron's docking entry, a lattice of steel arms glowing faintly against the infinite black."
+        );
+        ecs.addComponent(commonsWindowSpace, cwSpace);
+        
+        Entity commonsWindowDocked = ecs.createEntity("Commons_window_docked");
+        ItemDescriptionComponent cwDocked = new ItemDescriptionComponent(
+            "The window frames the interior of the starbase, bustling with activity."
+        );
+        ecs.addComponent(commonsWindowDocked, cwDocked);
+        
+        // Stateroom window descriptions
+        Entity stateroomWindowSpace = ecs.createEntity("Stateroom_window_space");
+        ItemDescriptionComponent swSpace = new ItemDescriptionComponent(
+            "Through the stateroom window, the starbase looms, its silhouette stark against a scattering of stars."
+        );
+        ecs.addComponent(stateroomWindowSpace, swSpace);
+        
+        Entity stateroomWindowDocked = ecs.createEntity("Stateroom_window_docked");
+        ItemDescriptionComponent swDocked = new ItemDescriptionComponent(
+            "Through the stateroom window, you can see the curved expanse of the interior of the starbase."
+        );
+        ecs.addComponent(stateroomWindowDocked, swDocked);
+        
+        // Bridge window descriptions
+        Entity bridgeWindowSpace = ecs.createEntity("Bridge_window_space");
+        ItemDescriptionComponent bwSpace = new ItemDescriptionComponent(
+            "The bridge window offers a commanding view of the starbase's docking arms, poised like a predator in the void."
+        );
+        ecs.addComponent(bridgeWindowSpace, bwSpace);
+        
+        Entity bridgeWindowDocked = ecs.createEntity("Bridge_window_docked");
+        ItemDescriptionComponent bwDocked = new ItemDescriptionComponent(
+            "The bridge window shows the interior of the starbase, bustling with activity."
+        );
+        ecs.addComponent(bridgeWindowDocked, bwDocked);
     }
     
     private void initializeGameEntities() {

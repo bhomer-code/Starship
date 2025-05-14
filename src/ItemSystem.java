@@ -5,10 +5,12 @@ import java.util.Collection;
  */
 public class ItemSystem implements Esystem {
     private ECS ecs;
+    private ItemDescriptionSystem itemDescriptionSystem;
     private static final String PLAYER = "player";
     
     public ItemSystem(ECS ecs) {
         this.ecs = ecs;
+        this.itemDescriptionSystem = new ItemDescriptionSystem(ecs);
     }
 
     public boolean takeItem(String itemName) {
@@ -112,63 +114,22 @@ public class ItemSystem implements Esystem {
         ItemsComponent roomItems = ecs.getComponent(currentRoom, ItemsComponent.class);
         FixedItemsComponent fixedRoomItems = ecs.getComponent(currentRoom, FixedItemsComponent.class);
         
-        if ((roomItems == null && fixedRoomItems == null) || (!roomItems.hasItem(itemName) && !fixedRoomItems.hasItem(itemName))) {
+        boolean itemExists = false;
+        if (roomItems != null && roomItems.hasItem(itemName)) {
+            itemExists = true;
+        }
+        if (fixedRoomItems != null && fixedRoomItems.hasItem(itemName)) {
+            itemExists = true;
+        }
+        
+        if (!itemExists) {
             System.out.println("Nothing special to see here.");
             return;
         }
         
-        // Get description based on item and room
-        String description = getItemDescription(itemName, position.room);
-        if (!description.isEmpty()) {
-            System.out.println(description);
-        } else {
-            System.out.println("Nothing special to see here.");
-        }
+        // Get description using the new ItemDescriptionSystem
+        String description = itemDescriptionSystem.getItemInRoomDescription(itemName, position.room);
+        System.out.println(description);
     }
-    
-    private String getItemDescription(String item, String room) {
-    	// room-specific descriptions of some fixed and regular items
-        switch (item) {
-            case "window":
-                // Window description depends on room and docking state
-                DockingComponent docking = ecs.getComponent(ecs.createEntity("docking"), DockingComponent.class);
-                switch (room) {
-                    case "Commons":
-                        return docking.inSpace ?
-                            "The window frames Starbase Omicron's docking entry, a lattice of steel arms glowing faintly against the infinite black." :
-                            "The window frames the interior of the starbase, bustling with activity.";
-                    case "Stateroom":
-                        return docking.inSpace ?
-                            "Through the stateroom window, the starbase looms, its silhouette stark against a scattering of stars." :
-                            "Through the stateroom window, you can see the curved expanse of the interior of the starbase.";
-                    case "Bridge":
-                        return docking.inSpace ?
-                            "The bridge window offers a commanding view of the starbase's docking arms, poised like a predator in the void." :
-                            "The bridge window shows the interior of the starbase, bustling with activity.";
-                }
-                break;
-            case "wrench":
-                if (room.equals("Engine")) {
-                    return "A hefty wrench, its handle worn smooth from use, rests near the reactor. It's caked with grease.";
-                }
-                break;
-            case "tarp":
-                if (room.equals("Cargo")) {
-                    return "The tarp is dusty and frayed, draped over a lumpy shape. Peeking beneath reveals a stack of spare parts.";
-                }
-                break;
-            case "tank":
-                if (room.equals("Ship Locker")) {
-                    return "The oxygen tank is scratched but functional, its gauge showing three-quarters full.";
-                }
-                break;
-            case "console":
-                if (room.equals("Bridge")) {
-                    return "The console is a maze of switches, dials, and a glowing comms unit, ready to hail the starbase.";
-                }
-                break;
-        }
 
-        return "";
-    }
 }
