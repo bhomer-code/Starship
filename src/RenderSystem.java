@@ -1,4 +1,5 @@
 import java.util.Collection;
+import java.util.List;
 
 /**
  * System that handles rendering/displaying game information
@@ -19,7 +20,7 @@ public class RenderSystem implements Esystem {
         if (desc != null) {
             // Show description
             if (forceLongDescription || desc.firstVisit) {
-                System.out.println(desc.longDesc);
+                System.out.print(desc.longDesc);
                 desc.firstVisit = false;
             } else {
                 System.out.println(desc.shortDesc);
@@ -28,11 +29,21 @@ public class RenderSystem implements Esystem {
         
         // Show exits
         if (exits != null) {
-            System.out.print("Exits: ");
+            System.out.print("\nExits: ");
             for (String direction : exits.getDirections()) {
                 System.out.print(direction + " ");
             }
             System.out.println();
+        }
+        // List non-fixed items
+        ItemsComponent roomItems = ecs.getComponent(room, ItemsComponent.class);
+        List<String> lstItems = roomItems.getItems();
+        if (!lstItems.isEmpty()) {
+        	System.out.print("Items: ");
+	        for (String item : roomItems.getItems()) {
+	        	System.out.print(item + " ");
+	        }
+	        System.out.println();
         }
     }
     

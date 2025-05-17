@@ -131,5 +131,11 @@ public class ItemSystem implements Esystem {
         String description = itemDescriptionSystem.getItemInRoomDescription(itemName, position.room);
         System.out.println(description);
     }
+    
+    public String getItemDescription(String item, String room) {
+    	// Get description using the ItemDescriptionSystem
+        String description = itemDescriptionSystem.getItemInRoomDescription(item, room);
+        return description;
+    }
 
 }

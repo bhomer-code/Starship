@@ -40,7 +40,7 @@ public class GameInitializer {
         Entity engine = createRoom("Engine");
         addRoomComponents(engine,
             "The engine room, filled with machinery.",
-            "The engine room thrums with the pulse of KY-25B's fusion drive. Pipes and conduits snake across the walls, and a control panel flickers with status lights. A heavy wrench lies abandoned near the reactor housing."
+            "The engine room thrums with the pulse of KY-25B's fusion drive. Pipes and conduits snake across the walls, and a control panel flickers with status lights."
         );
         addExit(engine, "down", "Cargo");
         addExit(engine, "fore", "Commons");
@@ -53,7 +53,7 @@ public class GameInitializer {
             "The cargo bay is a shadowy hold below the engine room. Crates are lashed to the deck, their contents rattling faintly with the ship's vibrations. A dusty tarp covers something bulky in the corner."
         );
         addExit(cargo, "up", "Engine");
-        addRoomItem(cargo, "tarp");
+        addRoomFixedItem(cargo, "tarp");
         
         // Hall
         Entity hall = createRoom("Hall");
@@ -79,7 +79,7 @@ public class GameInitializer {
         Entity shipLocker = createRoom("Ship Locker");
         addRoomComponents(shipLocker,
             "A cramped locker room for gear.",
-            "The ship locker is a utilitarian space crammed with EVA suits and tools. A spare oxygen tank leans against the bulkhead, its gauge glowing faintly."
+            "The ship locker is a utilitarian space crammed with EVA suits and tools."
         );
         addExit(shipLocker, "port", "Hall");
         addExit(shipLocker, "starboard", "Airlock");
@@ -108,7 +108,7 @@ public class GameInitializer {
         // Outside
         Entity outside = createRoom("outside");
         addRoomComponents(outside,
-            "Outside the ship, floating in space.",
+            "Outside the ship.",
             "You float weightless outside KY-25B, the stars endless around you. The ship's hull gleams faintly in the starlight."
         );
         addExit(outside, "in", "Airlock");
