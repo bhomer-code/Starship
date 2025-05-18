@@ -151,28 +151,32 @@ public class GameInitializer {
     
     private void initializeItemDescriptions() {
         // Initialize wrench in Engine room
-        Entity wrenchEngine = ecs.createEntity("Engine_wrench");
-        ItemDescriptionComponent wrenchDesc = new ItemDescriptionComponent("A hefty wrench.");
-        wrenchDesc.addContextDescription("Engine", "A hefty wrench, its handle worn smooth from use, rests near the reactor. It's caked with grease.");
-        ecs.addComponent(wrenchEngine, wrenchDesc);
+        Entity wrench = ecs.createEntity("wrench"); 
+        ItemDescriptionComponent wrenchDesc = new ItemDescriptionComponent("The grease-caked wrench is hefty, useful for working on heavy machinery.");
+        wrenchDesc.addContextDescription("Engine", "The hefty wrench, its handle worn smooth from use, rests near the reactor. It's caked with grease.");
+        ecs.addComponent(wrench, wrenchDesc);
         
-        // Initialize tarp in Cargo bay
-        Entity tarpCargo = ecs.createEntity("Cargo_tarp");
-        ItemDescriptionComponent tarpDesc = new ItemDescriptionComponent("A dusty tarp.");
-        tarpDesc.addContextDescription("Cargo", "The tarp is dusty and frayed, draped over a lumpy shape. Peeking beneath reveals a stack of spare parts.");
-        ecs.addComponent(tarpCargo, tarpDesc);
+        // Initialize fixed tarp in Cargo bay
+        Entity cargoTarp = ecs.createEntity("Cargo_tarp");
+        ItemDescriptionComponent tarpDesc = new ItemDescriptionComponent("The tarp is dusty and frayed, draped over a lumpy shape. Peeking beneath reveals a stack of spare parts.");
+        ecs.addComponent(cargoTarp, tarpDesc);
         
         // Initialize tank in Ship Locker
-        Entity tankLocker = ecs.createEntity("Ship Locker_tank");
-        ItemDescriptionComponent tankDesc = new ItemDescriptionComponent("An oxygen tank.");
-        tankDesc.addContextDescription("Ship Locker", "The oxygen tank is scratched but functional, its gauge showing three-quarters full.");
-        ecs.addComponent(tankLocker, tankDesc);
+        Entity tank = ecs.createEntity("tank");
+        ItemDescriptionComponent tankDesc = new ItemDescriptionComponent("The oxygen tank is scratched but functional, its gauge showing three-quarters full.");
+        tankDesc.addContextDescription("Ship Locker", "The oxygen tank is leaning up against a bulkhead. It is scratched but functional, its gauge showing three-quarters full.");
+        ecs.addComponent(tank, tankDesc);
         
-        // Initialize console on Bridge
-        Entity consoleBridge = ecs.createEntity("Bridge_console");
-        ItemDescriptionComponent consoleDesc = new ItemDescriptionComponent("A command console.");
-        consoleDesc.addContextDescription("Bridge", "The console is a maze of switches, dials, and a glowing comms unit, ready to hail the starbase.");
-        ecs.addComponent(consoleBridge, consoleDesc);
+        // Initialize fixed console in Bridge
+        Entity bridgeConsole = ecs.createEntity("Bridge_console");
+        ItemDescriptionComponent consoleDesc = new ItemDescriptionComponent("The console is a maze of switches, dials, and a glowing comms unit, ready to hail the starbase.");
+        ecs.addComponent(bridgeConsole, consoleDesc);
+        
+        // Initialize vac-suit
+        Entity vacSuit = ecs.createEntity("vac-suit");
+        ItemDescriptionComponent vacSuitDesc = new ItemDescriptionComponent("The vac-suit is complete with helmet for EVAs.");
+        vacSuitDesc.addContextDescription("Ship Locker", "The vac-suit hangs on a hook here, with an attached helmet.");
+        ecs.addComponent(vacSuit, vacSuitDesc);
         
         // Initialize window descriptions for different rooms and states
         initializeWindowDescriptions();

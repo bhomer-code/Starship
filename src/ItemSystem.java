@@ -123,13 +123,22 @@ public class ItemSystem implements Esystem {
         }
         
         if (!itemExists) {
-            System.out.println("Nothing special to see here.");
-            return;
+        	// check if not in inventory
+            InventoryComponent inventory = ecs.getComponent(player, InventoryComponent.class);
+            if (!inventory.getItems().contains(itemName)) {
+            	System.out.println("You don't see that here.");
+            	return;
+            }
         }
         
-        // Get description using the new ItemDescriptionSystem
-        String description = itemDescriptionSystem.getItemInRoomDescription(itemName, position.room);
-        System.out.println(description);
+        String description = "";
+        if (itemExists) { // Give room-specific description if item has one or default description if not
+        	description = itemDescriptionSystem.getItemInRoomDescription(itemName, position.room);
+        }
+        else { // if no inventory-specific description exists for item, will return the default description
+        	description = itemDescriptionSystem.getItemDescription(itemName, "Inventory");
+        }
+		System.out.println(description);
     }
     
     public String getItemDescription(String item, String room) {

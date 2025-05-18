@@ -22,7 +22,7 @@ public class ItemDescriptionSystem implements Esystem {
         ItemDescriptionComponent descComponent = ecs.getComponent(itemEntity, ItemDescriptionComponent.class);
         
         if (descComponent == null) {
-            return "You see nothing special about it.";
+            return "ids:You see nothing special about it.";
         }
         
         return descComponent.getDescription(context);
